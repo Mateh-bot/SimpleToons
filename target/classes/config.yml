@@ -1,0 +1,61 @@
+races:
+  human:
+    max-age: 101
+    height: 0.0
+    reach: 0.0
+    attack: 0.0
+  elf:
+    max-age: 251
+    height: 0.4
+    reach: 0.4
+    attack: 0.0
+  dwarf:
+    max-age: 151
+    height: -0.5
+    reach: -0.5
+    attack: 0.0
+  halfman:
+    max-age: 151
+    height: -1.0
+    reach: -1.0
+    attack: 0.0
+  orc:
+    max-age: 251
+    height: 0.5
+    reach: 0.5
+    attack: 0.0
+  goblin:
+    max-age: 151
+    height: -0.5
+    reach: -0.5
+    attack: 0.0
+  undead:
+    max-age: 15000
+    height: 0.0
+    reach: 0.0
+    attack: 0.0
+  fairy:
+    max-age: 15000
+    height: 0.0
+    reach: -1.5
+    attack: -3.0
+  giant:
+    max-age: 15000
+    height: 6.0
+    reach: 6.0
+    attack: 10.0
+  golem:
+    max-age: 15000
+    height: 1.0
+    reach: 5.0
+    attack: 5.0
+  ent:
+    max-age: 15000
+    height: 3.0
+    reach: 3.0
+    attack: 5.0
+  being:
+    max-age: 15000
+    height: 3.0
+    reach: 3.0
+    attack: 0.0

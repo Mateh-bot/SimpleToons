@@ -1,0 +1,27 @@
+name: SimpleToons
+version: '1.0-SNAPSHOT'
+main: com.venned.simpletoons.Main
+api-version: '1.21'
+commands:
+  selectculture:
+    description: TemporeCommand
+  selectgender:
+    description: TemporeGender
+  race:
+    description: Race
+  toon:
+    description: Toon
+  menu:
+    description: Menu
+  crawl:
+    description: Crawl
+  sit:
+    description: Sit
+  carry:
+    description: Carry
+  profession:
+    description: Profession
+  lockpick:
+    description: lockpick
+  pickpocket:
+    description: pickpocket
