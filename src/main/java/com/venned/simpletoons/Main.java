@@ -6,6 +6,8 @@ import com.venned.simpletoons.commands.*;
 import com.venned.simpletoons.data.SQLService;
 import com.venned.simpletoons.data.TonManager;
 import com.venned.simpletoons.gui.CreationCharacterGUI;
+import com.venned.simpletoons.listeners.ToonNameListener;
+import com.venned.simpletoons.listeners.ToonNametagListener;
 import com.venned.simpletoons.listeners.data.CharacterLoadListener;
 import com.venned.simpletoons.listeners.data.PlayerJoinDataListener;
 import com.venned.simpletoons.manager.RaceManager;
@@ -36,17 +38,23 @@ import com.venned.simpletoons.professions.leatherworker.saddle.LeatherworkerSadd
 import com.venned.simpletoons.professions.leatherworker.workstation.LeatherworkerWorkStationListener;
 import com.venned.simpletoons.professions.mason.MasonWorkStationListener;
 import com.venned.simpletoons.professions.woodcutter.workstation.WoodcutterWorkStationListener;
+import com.venned.simpletoons.task.AgeUpdater;
 import com.venned.simpletoons.task.ToonsActive;
 import com.venned.simpletoons.thievery.ThieveryGUIListener;
 import com.venned.simpletoons.thievery.ThieveryManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -88,6 +96,19 @@ public final class Main extends JavaPlugin {
                 sendUnicodeActionBar(player, 3); // 5 filas de "᭢"
             }
         }, 0L, 40L); // Se actualiza cada 2 segundos (40 ticks)
+
+        scheduleAgeUpdater();
+
+        Bukkit.getScheduler().runTaskTimer(this, () -> {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                ArmorStand hologram = ToonNametagListener.getHologram(player.getUniqueId());
+                if (hologram != null && !hologram.isDead()) {
+                    player.getWorld().getPlayers().forEach(p -> {
+                    });
+                    hologram.teleport(player.getLocation().add(0, 2.0, 0));
+                }
+            }
+        }, 1L, 1L);
     }
 
     private void sendUnicodeActionBar(Player player, int filas) {
@@ -116,6 +137,8 @@ public final class Main extends JavaPlugin {
             throw new RuntimeException(e);
         }
         service.closeConnection();
+
+        ToonNametagListener.removeAllHolograms();
     }
 
     void loadCommands() {
@@ -136,6 +159,8 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MenuCommand(), this);
         getServer().getPluginManager().registerEvents(new SitCommand(), this);
         getServer().getPluginManager().registerEvents(new RoleplayChatListener(tonManager), this);
+        getServer().getPluginManager().registerEvents(new ToonNameListener(), this);
+        getServer().getPluginManager().registerEvents(new ToonNametagListener(), this);
         getServer().getPluginManager().registerEvents(new ProfessionWorkStationListener(), this);
 
         getServer().getPluginManager().registerEvents(new BlacksmithWorkStationListener(), this);
@@ -218,5 +243,25 @@ public final class Main extends JavaPlugin {
         if (!pluginFolder.exists()) {
             pluginFolder.mkdirs();
         }
+    }
+
+    private void scheduleAgeUpdater() {
+        ZoneId zoneId = ZoneId.of("America/New_York");
+        ZonedDateTime now = ZonedDateTime.now(zoneId);
+
+        ZonedDateTime nextSundayNoon = now.with(DayOfWeek.SUNDAY)
+                .withHour(12).withMinute(0).withSecond(0).withNano(0);
+
+        if (now.compareTo(nextSundayNoon) >= 0) {
+            nextSundayNoon = nextSundayNoon.plusWeeks(1);
+        }
+
+        long delaySeconds = Duration.between(now, nextSundayNoon).getSeconds();
+        long delayTicks = delaySeconds * 20; // 20 ticks per second
+        long periodTicks = 7L * 24 * 60 * 60 * 20; // One week in ticks
+
+        new AgeUpdater().runTaskTimer(this, delayTicks, periodTicks);
+
+        getLogger().info("AgeUpdater scheduled for: " + nextSundayNoon);
     }
 }

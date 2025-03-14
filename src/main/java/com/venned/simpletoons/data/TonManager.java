@@ -46,4 +46,13 @@ public class TonManager {
     public Set<PlayerTon> getPlayerTons() {
         return playerTons;
     }
+
+    public PlayerTon getPlayerTonByUUID(UUID uuid) {
+        for (PlayerTon toon : playerTons) {
+            if (toon.getOwner_uuid().equals(uuid)) {
+                return toon;
+            }
+        }
+        return null;
+    }
 }

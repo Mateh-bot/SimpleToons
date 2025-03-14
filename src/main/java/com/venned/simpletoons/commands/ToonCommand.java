@@ -57,7 +57,7 @@ public class ToonCommand implements CommandExecutor, TabCompleter {
                 handleForceSet(player, args);
                 break;
             case "revealnames":
-                player.sendMessage(ChatColor.YELLOW + "Funcionalidad no implementada.");
+                handleRevealNames(player, args);
                 break;
             case "username":
                 player.sendMessage(ChatColor.YELLOW + "Funcionalidad no implementada.");
@@ -222,8 +222,8 @@ public class ToonCommand implements CommandExecutor, TabCompleter {
         }
         PlayerTon toon = psOpt.get().getToon();
         toon.setName(newName);
-        player.setCustomName(newName);
-        player.setCustomNameVisible(true);
+        player.setDisplayName(newName);
+        player.setPlayerListName(newName);
         player.sendMessage(ChatColor.GREEN + "Tu Toon ahora se llama: " + newName);
     }
 
@@ -330,6 +330,18 @@ public class ToonCommand implements CommandExecutor, TabCompleter {
             default:
                 player.sendMessage(ChatColor.RED + "Atributo inválido. Usa: name, desc, culture, age, gender.");
                 break;
+        }
+    }
+
+    private void handleRevealNames(Player player, String[] args) {
+        if (!player.hasPermission("simpletoons.revealnames")) {
+            player.sendMessage(ChatColor.RED + "You do not have permission to reveal real names.");
+        }
+        player.sendMessage(ChatColor.YELLOW + "Real Names Mapping:");
+        for (PlayerSelect ps : Main.getInstance().getPlayerSelectSet()) {
+            String toonName = ps.getToon().getName();
+            String realName = ps.getPlayer().getName();
+            player.sendMessage(ChatColor.YELLOW + "Toon: " + toonName + " | Player: " + realName);
         }
     }
 
